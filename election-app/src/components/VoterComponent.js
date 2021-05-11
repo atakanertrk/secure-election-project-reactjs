@@ -103,10 +103,6 @@ class VoterComponent extends React.Component {
 
     async voteCandidate(candidateId) {
         var password = document.getElementById("votePassword").value;
-        alert(candidateId);
-        alert(password);
-        var hashedPassword = sha256(password).toString();
-        alert(hashedPassword);
         if (password.length == 0) {
             alert("please write your password before vote");
         }
@@ -114,7 +110,7 @@ class VoterComponent extends React.Component {
             const headers = { Authorization: `Bearer ${read_cookie("token")}` };
             var voteModel = {
                 "email": this.state.voterEmail,
-                "hashedPw": hashedPassword,
+                "password": password,
                 "electionId": this.state.detailsOfElection[0].id,
                 "vote": candidateId.toString()
             }
@@ -135,7 +131,10 @@ class VoterComponent extends React.Component {
     }
 
     ConditionalIsVotedComponent = (candidateId) => {
-        if (this.state.deletailElectionIsVoted == 1) {
+        if(this.state.detailsOfElection[0].isCompleted.toString() == "true"){
+            return(<h5>this election is already completed</h5>);
+        }
+        else if (this.state.deletailElectionIsVoted == 1) {
             return (
                 <div>
                     <h4 style={{ color: "red" }}>You Already Have Voted For This Election</h4>
@@ -184,15 +183,17 @@ class VoterComponent extends React.Component {
             return (<App />);
         }
         if (this.state.detailsOfElection.length > 0) {
+            console.log(this.state.detailsOfElection);
             return (
                 <div style={{ margin: "15px" }}>
                     <button type="button" className="btn btn-sm btn-danger" onClick={this.goBackFromDetails}>GoBack</button>
                     <hr />
                     <p>ELECTION DETAILS:</p>
                     <div style={{ border: "1px solid black", margin: "8px", width: "40%", padding: "8px" }}>
-                        <p>{this.state.detailsOfElection[0].id}</p>
-                        <p>{this.state.detailsOfElection[0].header}</p>
-                        <p>{this.state.detailsOfElection[0].description}</p>
+                        <p>id: {this.state.detailsOfElection[0].id}</p>
+                        <p>header: {this.state.detailsOfElection[0].header}</p>
+                        <p>description: {this.state.detailsOfElection[0].description}</p>
+                        <p>is completed: {this.state.detailsOfElection[0].isCompleted.toString()}</p>
                     </div>
                     {<this.ConditionalIsVotedComponent />}
                 </div>

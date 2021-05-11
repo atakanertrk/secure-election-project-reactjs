@@ -32,11 +32,9 @@ class App extends React.Component {
   adminLoginOnClick = async (paramater) => {
     var adminName = document.getElementById("adminName").value;
     var adminPassword = document.getElementById("adminPassword").value;
-    var hashedAdminPassword = sha256(adminPassword).toString();
-    adminPassword = "";
     var LoginObject = {
       name: adminName,
-      hashedPw: hashedAdminPassword
+      password: adminPassword
     }
     console.log(LoginObject);
     await axios.post(`https://${constants.url}/api/admin/login`, LoginObject)
@@ -59,6 +57,31 @@ class App extends React.Component {
       });
   }
 
+  adminCreateOnClick = async () =>{
+    var adminName = document.getElementById("adminName").value;
+    var adminPassword = document.getElementById("adminPassword").value;
+    var CreateObject = {
+      name: adminName,
+      password: adminPassword
+    }
+    await axios.post(`https://${constants.url}/api/admin/createaccount`, CreateObject)
+    .then(res => {
+      console.log("res.status");
+      console.log(res.status);
+      if(res.status == 200){
+        this.adminLoginOnClick();
+        this.setState({
+          statusMessage: "admin account created, you can login"
+        });
+      }
+    }).catch(err => {
+      console.log(err);
+      this.setState({
+        statusMessage: "create failed"
+      })
+    });
+  }
+
   electionResultsOnClick = () => {
     var electionId = document.getElementById("inputElectionId").value;
     this.setState({
@@ -73,7 +96,6 @@ class App extends React.Component {
       voterEmail: email
     });
   }
-
 
   render() {
     console.log("here");
@@ -96,10 +118,12 @@ class App extends React.Component {
           <label>Admin Name</label>
           <input type="text" className="form-control" placeholder="name" id="adminName" autoComplete="off" /> <br />
           <label>Admin Password</label>
-          <input type="password" className="form-control" placeholder="password" id="adminPassword" autoComplete="off" /> <br />
           <small className="form-text text-muted">your security is important to us !</small>
+          <input type="password" className="form-control" placeholder="password" id="adminPassword" autoComplete="off" /> <br />
         </div>
-        <button type="button" className="btn btn-sm btn-primary" onClick={this.adminLoginOnClick}>Admin Login</button>
+        <button type="button" className="btn btn-sm btn-primary" onClick={this.adminLoginOnClick}>Login</button> <br/>
+        <small>or create new admin account with following information... </small>
+        <button type="button" className="btn btn-sm btn-outline-primary" onClick={this.adminCreateOnClick}>Create</button>
         <div style={{ marginTop: "50px", marginBottom: "50px" }}>
           <hr />
         </div>
