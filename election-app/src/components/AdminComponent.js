@@ -10,7 +10,7 @@ class AdminComponent extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            adminName: read_cookie("adminName"),
+            adminName: read_cookie("adminEmail"),
             token: read_cookie("token"),
             electionDetails: { header: "", description: "" },
             candidates: [],

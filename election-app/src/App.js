@@ -30,10 +30,10 @@ class App extends React.Component {
   }
 
   adminLoginOnClick = async (paramater) => {
-    var adminName = document.getElementById("adminName").value;
+    var adminEmail = document.getElementById("adminEmail").value;
     var adminPassword = document.getElementById("adminPassword").value;
     var LoginObject = {
-      name: adminName,
+      email: adminEmail,
       password: adminPassword
     }
     console.log(LoginObject);
@@ -43,7 +43,7 @@ class App extends React.Component {
         console.log(res.status);
         if(res.status == 200){
           bake_cookie('token', res.data.token);
-          bake_cookie('adminName', adminName);
+          bake_cookie('adminEmail', adminEmail);
           this.setState({
             statusMessage: "",
             token: res.data.token
@@ -58,10 +58,10 @@ class App extends React.Component {
   }
 
   adminCreateOnClick = async () =>{
-    var adminName = document.getElementById("adminName").value;
+    var adminEmail = document.getElementById("adminEmail").value;
     var adminPassword = document.getElementById("adminPassword").value;
     var CreateObject = {
-      name: adminName,
+      Email: adminEmail,
       password: adminPassword
     }
     await axios.post(`https://${constants.url}/api/admin/createaccount`, CreateObject)
@@ -69,15 +69,39 @@ class App extends React.Component {
       console.log("res.status");
       console.log(res.status);
       if(res.status == 200){
-        this.adminLoginOnClick();
         this.setState({
-          statusMessage: "admin account created, you can login"
+          statusMessage: "verify your email before login"
         });
       }
     }).catch(err => {
       console.log(err);
       this.setState({
         statusMessage: "create failed"
+      })
+    });
+  }
+
+
+  validateAdminEmailOnClick= async () => {
+    var email = document.getElementById("adminValidationEmail").value;
+    var code = document.getElementById("adminValidationCode").value;
+    var ValidateObj = {
+      Email: email,
+      Code: code
+    }
+    await axios.post(`https://${constants.url}/api/admin/verifyemail`, ValidateObj)
+    .then(res => {
+      console.log("res.status");
+      console.log(res.status);
+      if(res.status == 200){
+        this.setState({
+          statusMessage: "email verified, you can login"
+        });
+      }
+    }).catch(err => {
+      console.log(err);
+      this.setState({
+        statusMessage: "validation failed"
       })
     });
   }
@@ -115,8 +139,8 @@ class App extends React.Component {
       <div style={{ marginTop: "5%", marginLeft: "30%", marginRight: "30%", width: "40%", textAlign: "center" }}>
         <h4 style={{ color: "red" }}>{this.state.statusMessage}</h4>
         <div className="form-group">
-          <label>Admin Name</label>
-          <input type="text" className="form-control" placeholder="name" id="adminName" autoComplete="off" /> <br />
+          <label>Admin Email</label>
+          <input type="text" className="form-control" placeholder="email" id="adminEmail" autoComplete="off" /> <br />
           <label>Admin Password</label>
           <small className="form-text text-muted">your security is important to us !</small>
           <input type="password" className="form-control" placeholder="password" id="adminPassword" autoComplete="off" /> <br />
@@ -126,6 +150,12 @@ class App extends React.Component {
         <button type="button" className="btn btn-sm btn-outline-primary" onClick={this.adminCreateOnClick}>Create</button>
         <div style={{ marginTop: "50px", marginBottom: "50px" }}>
           <hr />
+          <div className="form-group">
+          <input type="text" className="form-control" placeholder="admin email to be validated" id="adminValidationEmail" autoComplete="off" /> <br />
+          <input type="text" className="form-control" placeholder="admin validation code" id="adminValidationCode" autoComplete="off" /> <br />
+          <button type="button" className="btn btn-sm btn-warning" onClick={this.validateAdminEmailOnClick}>Validate</button>
+        </div>
+        <hr/>
         </div>
         <h5 style={{ color: "green" }}>or continue as voter</h5>
         <div className="form-group">
