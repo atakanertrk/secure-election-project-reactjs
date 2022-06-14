@@ -1,2 +1,2 @@
 # Secure-Election-Project-ReactJS
-<a href="https://github.com/atakanertrk/Secure-Election-Project-API">Frontend web implementation of Secure-Election-Project-API backend</a>
+Frontend web implementation of <a href="https://github.com/atakanertrk/Secure-Election-Project-API">Secure-Election-Project-API backend</a>
